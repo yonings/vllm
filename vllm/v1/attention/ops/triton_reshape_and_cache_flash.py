@@ -186,6 +186,8 @@ def triton_reshape_and_cache_flash(
         num_warps = 16
         if torch.cuda.get_device_capability(key.device)[0] < 9:
             TILE_SIZE = min(512, TILE_SIZE)
+            num_stages = 4  # head_dim=64, 512 elements에 최적화
+            num_warps = 4   # warp당 128개 처리로 메모리 지연 감소
 
     # TODO(ngl): maybe replace with static launch grid to avoid overhead if
     #   using cudagraphs
